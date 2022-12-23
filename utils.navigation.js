@@ -1,5 +1,5 @@
-app.Script("Login.js")
-app.Script("App.js")
+app.Script("screen.login.js")
+app.Script("screen.app.js")
 
 function RootNavigator(layout) {
    const ROOT_ROUTES = {
@@ -14,6 +14,13 @@ function RootNavigator(layout) {
    }
 
    var current = null
+   var listeners = []
+
+   const listen = (fn) => {
+      listeners.push(fn)
+
+      return() => listeners.filter(cb => cb !== fn)
+   }
 
    const navigate = (key) => {
       if(current) {
@@ -24,7 +31,7 @@ function RootNavigator(layout) {
       }
 
       current = ROOT_ROUTES[key].component({
-         navigate
+         navigate, listen
       })
 
       current.Hide()
@@ -32,8 +39,11 @@ function RootNavigator(layout) {
       current.Animate("FadeIn")
    }
 
-
-   navigate("Login")
+   if(app.LoadText('accessToken')) {
+      navigate('App')
+   } else {
+      navigate("Login")
+   }
 }
 
 const APP_ROUTES = {
