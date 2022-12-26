@@ -1,0 +1,1 @@
+const primaryColor = '#1DA07F'

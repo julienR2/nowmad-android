@@ -1,4 +1,5 @@
-const BASE_URL = 'https://nowmad.io/api'
+const BASE_URL = app.IsDebugging() ? 'http://nowmad.io:5000/api' :
+   'https://nowmad.io/api'
 
 const api = ['get', 'post'].reduce((acc, method) => ({
    ...acc, [method]: (url, params, customHeaders = {}) => {
@@ -9,8 +10,8 @@ const api = ['get', 'post'].reduce((acc, method) => ({
       const headers = isExternal ? customHeaders : {
          'Content-Type': 'application/json',
          'Authorization': 'Bearer ' + app.LoadText(
-               'accessToken'),
-            ...customHeaders,
+            'accessToken'),
+         ...customHeaders,
       }
 
       const query = method === 'get' && params ? '?' + new URLSearchParams(
@@ -23,6 +24,16 @@ const api = ['get', 'post'].reduce((acc, method) => ({
          method: method.toUpperCase(),
          headers,
          body
-      }).then((res) => isExternal ? res : res.json())
+      }).then((res) => {
+         if(isExternal) return res
+
+         if(res.status === 401) {
+            app.ClearValue('accessToken')
+            rootNavigate('Login')
+            return
+         }
+         
+         return res.json()
+      })
    }
 }), {})

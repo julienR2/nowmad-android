@@ -1,20 +1,13 @@
-app.Script("screen.login.js")
-app.Script("screen.app.js")
+app.Script("screen.home.js")
+app.Script("screen.about.js")
 
-function RootNavigator(layout) {
-   const ROOT_ROUTES = {
-      Login: {
-         key: "Login",
-         component: Login
-      },
-      App: {
-         key: "App",
-         component: App
-      }
-   }
-
+function Navigator(parentLayout, routes, keepAlive = false) {
    var current = null
    var listeners = []
+   var mounted = {}
+
+   const layout = app.CreateLayout("Frame", "VCenter,FillXY");
+   parentLayout.AddChild(layout);
 
    const listen = (fn) => {
       listeners.push(fn)
@@ -25,40 +18,37 @@ function RootNavigator(layout) {
    const navigate = (key) => {
       if(current) {
          const previous = current
-         current.Animate("FadeOut", () => {
-            layout.RemoveChild(previous)
+         current.layout.Animate("FadeOut", () => {
+            previous.onBlur && previous.onBlur()
+
+            if(keepAlive) return
+
+            previous.onUnmount && previous.onUnmount()
+
+            layout.RemoveChild(previous.layout)
          })
       }
 
-      current = ROOT_ROUTES[key].component({
+      current = mounted[key] || routes[key].component({
          navigate, listen
       })
 
-      current.Hide()
-      layout.AddChild(current)
-      current.Animate("FadeIn")
+      current.layout.Hide()
+      layout.AddChild(current.layout)
+      current.layout.Animate("FadeIn")
+
+      if(!keepAlive || !mounted[key]) {
+         current.onMount && current.onMount()
+      }
+
+      current.onFocus && current.onFocus()
+
+      mounted[key] = current
+
+      listeners.map(fn => fn(routes[key]))
    }
 
-   if(app.LoadText('accessToken')) {
-      navigate('App')
-   } else {
-      navigate("Login")
+   return {
+      navigate, listen
    }
-}
-
-const APP_ROUTES = {
-   Home: {
-      icon: "fa::",
-      key: "Home",
-      //component: Home
-   },
-   About: {
-      icon: "fa",
-      key: "About",
-      //component: About
-   }
-}
-
-function AppNavigator(layout) {
-
 }

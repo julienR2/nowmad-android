@@ -3,27 +3,27 @@ app.Script("utils.api.js")
 function Login({
    navigate
 }) {
-   const lay = MUI.CreateLayout("Linear", "FillXY,VCenter");
+   const layout = MUI.CreateLayout("Linear", "FillXY,VCenter");
 
    const logo = app.CreateImage("Img/Icon.png", 0.25)
    logo.SetMargins(0, 0, 0, 0.05)
-   lay.AddChild(logo)
+   layout.AddChild(logo)
 
    const emailInput = MUI.CreateTextEditFilled(0.8, "Left",
       "Email", true)
-   lay.AddChild(emailInput)
+   layout.AddChild(emailInput)
 
    const passwordInput = MUI.CreateTextEditFilled(0.8,
       "Left,Password",
       "Password", true)
    passwordInput.SetMargins(0, 0.05, 0, 0.1)
    passwordInput.SetOnEnter(onSubmit)
-   lay.AddChild(
+   layout.AddChild(
       passwordInput)
 
    const submitButton = MUI.CreateButtonRaised("Login", 0.35)
    submitButton.SetOnTouch(onSubmit)
-   lay.AddChild(submitButton)
+   layout.AddChild(submitButton)
 
    function onSubmit() {
       emailInput.ClearFocus()
@@ -44,6 +44,7 @@ function Login({
             return
          }
 
+
          app.SaveText('accessToken', accessToken)
          navigate('App')
       }).catch(() => {
@@ -52,5 +53,7 @@ function Login({
       })
    }
 
-   return lay
+   return {
+      layout
+   }
 }

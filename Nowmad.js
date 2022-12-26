@@ -1,24 +1,45 @@
 cfg.Light
 cfg.MUI
 
+var  rootNavigate = () => {}
+
+app.Script("utils.constants.js")
 app.Script("utils.navigation.js");
+app.Script("screen.login.js")
+app.Script("screen.app.js")
 
 function OnStart() {
    app.SetOrientation("Portrait");
+   app.InitializeUIKit(primaryColor)
 
-   app.InitializeUIKit(MUI.colors.teal)
+   layout = MUI.CreateLayout("Linear", "FillXY");
 
-   //Create the main app layout with objects vertically centered.
-   layMain = MUI.CreateLayout("Linear", "FillXY");
+   const routes = {
+      Login: {
+         key: "Login",
+         component: Login
+      },
+      App: {
+         key: "App",
+         component: App
+      }
+   }
+
+   const {
+      navigate, listen
+   } = Navigator(layout, routes)
    
-   layContent = app.CreateLayout("Frame", "VCenter,FillXY");
-   layContent.SetSize(1, 0.95);
-   layMain.AddChild(layContent);
+   rootNavigate = navigate
 
-   RootNavigator(layContent)
+   if(app.LoadText('accessToken')) {
+      navigate('App')
+   } else {
+      navigate("Login")
+   }
 
-   //Add main layout and drawer to app.	
-   app.AddLayout(layMain);
+   // app.ClearValue('accessToken')
+
+   app.AddLayout(layout);
 
    //Prevent back key closing the app.
    // app.EnableBackKey(false);
