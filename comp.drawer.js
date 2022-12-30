@@ -14,7 +14,7 @@ function CreateDrawer({
    layDrawer.AddChild(layDrawerTop);
 
    //Add an icon to top layout.
-   var img = app.CreateImage("Img/Icon.png", 0.1);
+   var img = app.CreateImage("Img/Nowmad.png", 0.1);
    img.SetMargins(0.02, 0.02, 0.04, 0.02);
    layDrawerTop.AddChild(img);
 

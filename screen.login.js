@@ -5,7 +5,7 @@ function Login({
 }) {
    const layout = MUI.CreateLayout("Linear", "FillXY,VCenter");
 
-   const logo = app.CreateImage("Img/Icon.png", 0.25)
+   const logo = app.CreateImage("Img/Nowmad.png", 0.25)
    logo.SetMargins(0, 0, 0, 0.05)
    layout.AddChild(logo)
 

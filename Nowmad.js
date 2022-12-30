@@ -9,7 +9,7 @@ app.Script("screen.login.js")
 app.Script("screen.app.js")
 
 function OnStart() {
-   app.SetOrientation("Portrait");
+ //  app.SetOrientation("Portrait");
    app.InitializeUIKit(primaryColor)
 
    layout = MUI.CreateLayout("Linear", "FillXY");

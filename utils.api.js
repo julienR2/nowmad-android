@@ -2,7 +2,7 @@ const BASE_URL = app.IsDebugging() ? 'http://nowmad.io:5000/api' :
    'https://nowmad.io/api'
 
 const api = ['get', 'post'].reduce((acc, method) => ({
-   ...acc, [method]: (url, params, customHeaders = {}) => {
+   ...acc, [method]: (url, params, customHeaders = {}, bodyParse = JSON.stringify) => {
       const isExternal = url.startsWith('http')
 
       const fullUrl = isExternal ? url : BASE_URL + url
@@ -17,7 +17,7 @@ const api = ['get', 'post'].reduce((acc, method) => ({
       const query = method === 'get' && params ? '?' + new URLSearchParams(
          params).toString() : ''
 
-      const body = method === 'post' ? JSON.stringify(params) :
+      const body = method === 'post' ? bodyParse(params) :
          undefined
 
       return fetch(fullUrl + query, {
@@ -25,6 +25,7 @@ const api = ['get', 'post'].reduce((acc, method) => ({
          headers,
          body
       }).then((res) => {
+      console.log('res',res)
          if(isExternal) return res
 
          if(res.status === 401) {
